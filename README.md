@@ -1,7 +1,7 @@
 # 50.007 ML Project
 
 - Kaggle link: <https://www.kaggle.com/competitions/50-007-machine-learning-summer-2024>
-- Rubrics: <www.kaggle.com/competitions/50-007-machine-learning-summer-2024/overview/grading-metric>
+- Rubrics: <https://www.kaggle.com/competitions/50-007-machine-learning-summer-2024/overview/grading-metric>
 
 `task1.ipynb` and `task2.ipynb` is expected to be relatively simple to do, so one person can take each. `task3/` is a folder because part of the deliverables is every method we tried. So everyone can try different methods as separate notebooks inside the folder.
 
