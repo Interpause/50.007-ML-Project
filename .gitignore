@@ -8,3 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Data
+/data/*
+!/data/50-007-machine-learning-summer-2024.zip
