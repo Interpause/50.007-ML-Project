@@ -5,7 +5,7 @@
 
 `task1.ipynb` and `task2.ipynb` is expected to be relatively simple to do, so one person can take each. `task3/` is a folder because part of the deliverables is every method we tried. So everyone can try different methods as separate notebooks inside the folder.
 
-Below are details copied from the Kaggle:
+**Below** are details copied from the Kaggle:
 
 ## Project Summary
 
