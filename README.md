@@ -9,7 +9,7 @@
 
 ## Project Summary
 
-The detection of online hate speech can be formulated as a text classification task: "Given a social media post, classify if the post is hateful or non-hateful". In this project, you are to apply machine learning approaches to perform hate speech classification. Specifically, you will need to perform the following tasks.
+(lol) The detection of online hate speech can be formulated as a text classification task: "Given a social media post, classify if the post is hateful or non-hateful". In this project, you are to apply machine learning approaches to perform hate speech classification. Specifically, you will need to perform the following tasks.
 
 ## Task 0: Document your Journey & Thoughts (5 marks)
 
