@@ -12,3 +12,4 @@ wheels/
 # Data
 /data/*
 !/data/50-007-machine-learning-summer-2024.zip
+!/data/50-007-machine-learning-summer-2025.zip
