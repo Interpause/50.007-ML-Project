@@ -97,8 +97,8 @@ def fit_svd(HP: Hparams, train_X: np.ndarray, quiet: bool = False):
 def macro_f1_eval(y_pred, dtrain):
     """Custom evaluation function for macro F1 score.
 
-    XGBoost custom eval functions should return (eval_name, eval_result, is_higher_better).
-    For early stopping, we want to maximize F1, so is_higher_better=True.
+    XGBoost custom eval functions should return (eval_name, eval_result).
+    The maximize=True parameter in xgb.train() handles the direction.
     """
     y_true = dtrain.get_label()
     # Convert probabilities to binary predictions
@@ -107,8 +107,8 @@ def macro_f1_eval(y_pred, dtrain):
     # Calculate macro F1 score (average of F1 scores for both classes)
     f1_macro = f1_score(y_true, y_pred_binary, average="macro")
 
-    # Return tuple: (metric_name, metric_value, higher_is_better)
-    return "macro_f1", f1_macro, True
+    # Return tuple: (metric_name, metric_value)
+    return "macro_f1", f1_macro
 
 
 def train(
@@ -124,7 +124,7 @@ def train(
     if HP.dim_reduction_method == "pca":
         model_dim = fit_pca(HP, train_X, quiet=quiet)
     elif HP.dim_reduction_method == "svd":
-        model_dim = fit_svd(HP, train_X, quiet=True)
+        model_dim = fit_svd(HP, train_X, quiet=quiet)
     else:
         raise ValueError(f"Unknown method: {HP.dim_reduction_method}")
 
@@ -179,7 +179,7 @@ def train(
         custom_metric=macro_f1_eval,
         maximize=True,
         # verbose_eval=200,
-        verbose_eval=False,
+        verbose_eval=False if quiet else 50,
     )
 
     best_iter = model_xgb.best_iteration
