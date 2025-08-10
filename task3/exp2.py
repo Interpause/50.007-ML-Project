@@ -49,10 +49,19 @@ def tfidf_to_np(df: pd.DataFrame):
     return X, y
 
 
+CACHE_PCA = {}
+
+
 def fit_pca(HP: Hparams, train_X: np.ndarray, quiet: bool = False):
     """Fit PCA for dim reduction and report some stats."""
+    global CACHE_PCA
+    key = f"{id(train_X)}_{HP.dim_n_components}_{HP.seed}"
+    if key in CACHE_PCA:
+        return CACHE_PCA[key]
+
     model_pca = PCA(n_components=HP.dim_n_components, random_state=HP.seed)
     model_pca.fit(train_X)
+    CACHE_PCA[key] = model_pca
 
     ratios = list(zip(range(HP.dim_n_components), model_pca.explained_variance_ratio_))
     ratios.sort(key=lambda x: x[1], reverse=True)
@@ -70,14 +79,23 @@ def fit_pca(HP: Hparams, train_X: np.ndarray, quiet: bool = False):
     return model_pca
 
 
+CACHE_SVD = {}
+
+
 def fit_svd(HP: Hparams, train_X: np.ndarray, quiet: bool = False):
     """Fit TruncatedSVD for dimensionality reduction and report some stats.
 
     This is technically called LSA, and the scikit learn documentation explicitly
     said it is good for tfidf. Why? I'll explain in the report one day.
     """
+    global CACHE_SVD
+    key = f"{id(train_X)}_{HP.dim_n_components}_{HP.seed}"
+    if key in CACHE_SVD:
+        return CACHE_SVD[key]
+
     model_svd = TruncatedSVD(n_components=HP.dim_n_components, random_state=HP.seed)
     model_svd.fit(train_X)
+    CACHE_SVD[key] = model_svd
 
     if quiet:
         return model_svd
@@ -184,16 +202,30 @@ def train(
 
     best_iter = model_xgb.best_iteration
     val_f1 = results["val"]["macro_f1"][best_iter]
+    train_f1 = results["train"]["macro_f1"][best_iter]
     val_err = results["val"]["error"][best_iter]
+    train_err = results["train"]["error"][best_iter]
+
+    # Calculate discrepancy (overfitting indicator)
+    f1_discrepancy = train_f1 - val_f1
+    err_discrepancy = val_err - train_err
 
     if not quiet:
         print(f"Best iteration: {best_iter}")
+        print(f"Training F1 at best iteration: {train_f1:.4f}")
         print(f"Validation F1 at best iteration: {val_f1:.4f}")
+        print(f"F1 discrepancy (train - val): {f1_discrepancy:.4f}")
+        print(f"Training error at best iteration: {train_err:.4f}")
         print(f"Validation error at best iteration: {val_err:.4f}")
+        print(f"Error discrepancy (val - train): {err_discrepancy:.4f}")
 
     return dict(
         val_err=val_err,
+        train_err=train_err,
         val_f1=val_f1,
+        train_f1=train_f1,
+        f1_discrepancy=f1_discrepancy,
+        err_discrepancy=err_discrepancy,
         model_xgb=model_xgb,
         model_dim=model_dim,
     )
