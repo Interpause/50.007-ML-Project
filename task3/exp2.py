@@ -22,7 +22,7 @@ class Hparams:
     # XGBoost hyperparameters
     xgb_max_depth: int = 6
     xgb_learning_rate: float = 0.01
-    # xgb_num_parallel_tree: int = 1
+    xgb_num_parallel_tree: int = 1
     xgb_colsample_bynode: float = 0.5
     xgb_subsample: float = 0.5
     xgb_min_split_loss: float = 0.5
@@ -98,13 +98,12 @@ def train(
         "eval_metric": "error",
         "sampling_method": "gradient_based",
         "objective": "binary:logistic",
-        "num_parallel_tree": 1,
         "random_state": HP.seed,
         #
         # Hyperparameters
         "max_depth": HP.xgb_max_depth,
         "learning_rate": HP.xgb_learning_rate,
-        # "num_parallel_tree": HP.xgb_num_parallel_tree,
+        "num_parallel_tree": HP.xgb_num_parallel_tree,
         "colsample_bynode": HP.xgb_colsample_bynode,
         "subsample": HP.xgb_subsample,
         "min_split_loss": HP.xgb_min_split_loss,
