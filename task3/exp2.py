@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.decomposition import PCA, TruncatedSVD
+from sklearn.metrics import f1_score
 
 
 @dataclass
@@ -93,6 +94,23 @@ def fit_svd(HP: Hparams, train_X: np.ndarray, quiet: bool = False):
     return model_svd
 
 
+def macro_f1_eval(y_pred, dtrain):
+    """Custom evaluation function for macro F1 score.
+
+    XGBoost custom eval functions should return (eval_name, eval_result, is_higher_better).
+    For early stopping, we want to maximize F1, so is_higher_better=True.
+    """
+    y_true = dtrain.get_label()
+    # Convert probabilities to binary predictions
+    y_pred_binary = (y_pred > 0.5).astype(int)
+
+    # Calculate macro F1 score (average of F1 scores for both classes)
+    f1_macro = f1_score(y_true, y_pred_binary, average="macro")
+
+    # Return tuple: (metric_name, metric_value, higher_is_better)
+    return "macro_f1", f1_macro, True
+
+
 def train(
     HP: Hparams,
     *,
@@ -158,19 +176,24 @@ def train(
         evals=eval_list,
         evals_result=results,
         early_stopping_rounds=HP.early_stopping_rounds,
+        custom_metric=macro_f1_eval,
+        maximize=True,
         # verbose_eval=200,
         verbose_eval=False,
     )
 
     best_iter = model_xgb.best_iteration
+    val_f1 = results["val"]["macro_f1"][best_iter]
     val_err = results["val"]["error"][best_iter]
 
     if not quiet:
         print(f"Best iteration: {best_iter}")
-        print(f"Validation error at best iteration: {val_err}")
+        print(f"Validation F1 at best iteration: {val_f1:.4f}")
+        print(f"Validation error at best iteration: {val_err:.4f}")
 
     return dict(
         val_err=val_err,
+        val_f1=val_f1,
         model_xgb=model_xgb,
         model_dim=model_dim,
     )
