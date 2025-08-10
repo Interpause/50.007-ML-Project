@@ -1,9 +1,10 @@
 from dataclasses import dataclass
+from typing import Literal
 
 import numpy as np
 import pandas as pd
 import xgboost as xgb
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA, TruncatedSVD
 
 
 @dataclass
@@ -16,8 +17,9 @@ class Hparams:
     num_rounds: int = 10000
     early_stopping_rounds: int = 500
 
-    # Other hyperparameters
-    pca_n_components = 1000
+    # Dimensionality reduction hyperparameters
+    dim_reduction_method: Literal["pca", "svd"] = "pca"
+    dim_n_components = 1000
 
     # XGBoost hyperparameters
     xgb_max_depth: int = 6
@@ -48,10 +50,10 @@ def tfidf_to_np(df: pd.DataFrame):
 
 def fit_pca(HP: Hparams, train_X: np.ndarray, quiet: bool = False):
     """Fit PCA for dim reduction and report some stats."""
-    model_pca = PCA(n_components=HP.pca_n_components, random_state=HP.seed)
+    model_pca = PCA(n_components=HP.dim_n_components, random_state=HP.seed)
     model_pca.fit(train_X)
 
-    ratios = list(zip(range(HP.pca_n_components), model_pca.explained_variance_ratio_))
+    ratios = list(zip(range(HP.dim_n_components), model_pca.explained_variance_ratio_))
     ratios.sort(key=lambda x: x[1], reverse=True)
 
     if quiet:
@@ -67,6 +69,30 @@ def fit_pca(HP: Hparams, train_X: np.ndarray, quiet: bool = False):
     return model_pca
 
 
+def fit_svd(HP: Hparams, train_X: np.ndarray, quiet: bool = False):
+    """Fit TruncatedSVD for dimensionality reduction and report some stats.
+
+    This is technically called LSA, and the scikit learn documentation explicitly
+    said it is good for tfidf. Why? I'll explain in the report one day.
+    """
+    model_svd = TruncatedSVD(n_components=HP.dim_n_components, random_state=HP.seed)
+    model_svd.fit(train_X)
+
+    if quiet:
+        return model_svd
+
+    print("TruncatedSVD Dimensionality Reduction:")
+    print(f"  Components: {HP.dim_n_components}")
+    print(
+        f"  Explained Variance Ratio (first 3): {model_svd.explained_variance_ratio_[:3]}"
+    )
+    print(
+        f"  Total Explained Variance Ratio: {model_svd.explained_variance_ratio_.sum():.4f}"
+    )
+
+    return model_svd
+
+
 def train(
     HP: Hparams,
     *,
@@ -77,12 +103,17 @@ def train(
     quiet: bool = False,
 ):
     """Train model using hyperparameters."""
-    model_pca = fit_pca(HP, train_X, quiet=quiet)
+    if HP.dim_reduction_method == "pca":
+        model_dim = fit_pca(HP, train_X, quiet=quiet)
+    elif HP.dim_reduction_method == "svd":
+        model_dim = fit_svd(HP, train_X, quiet=True)
+    else:
+        raise ValueError(f"Unknown method: {HP.dim_reduction_method}")
 
     # Transform the data
-    t_train_X = model_pca.transform(train_X)
-    t_val_X = model_pca.transform(val_X)
-    # t_test_X = model_pca.transform(test_X)
+    t_train_X = model_dim.transform(train_X)
+    t_val_X = model_dim.transform(val_X)
+    # t_test_X = model_dim.transform(test_X)
     dtrain = xgb.DMatrix(t_train_X, label=train_y)
     dval = xgb.DMatrix(t_val_X, label=val_y)
 
@@ -141,18 +172,13 @@ def train(
     return dict(
         val_err=val_err,
         model_xgb=model_xgb,
-        model_pca=model_pca,
+        model_dim=model_dim,
     )
 
 
-def inference(
-    test_X: np.ndarray,
-    *,
-    model_xgb: xgb.Booster,
-    model_pca: PCA,
-):
+def inference(test_X: np.ndarray, *, model_xgb: xgb.Booster, model_dim):
     """Run inference on the test set."""
-    t_test_X = model_pca.transform(test_X)
+    t_test_X = model_dim.transform(test_X)
     dtest = xgb.DMatrix(t_test_X)
 
     pred_y = model_xgb.predict(dtest, iteration_range=(0, model_xgb.best_iteration + 1))
