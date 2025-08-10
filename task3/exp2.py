@@ -153,7 +153,8 @@ def train(
     dtrain = xgb.DMatrix(t_train_X, label=train_y)
     dval = xgb.DMatrix(t_val_X, label=val_y)
 
-    n_neg, n_pos = np.unique_counts(train_y).counts
+    n_pos = np.sum(train_y)
+    n_neg = len(train_y) - n_pos
 
     # See: https://xgboost.readthedocs.io/en/stable/tutorials/param_tuning.html
     # See: https://xgboost.readthedocs.io/en/stable/parameter.html

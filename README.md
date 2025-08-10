@@ -1,3 +1,11 @@
+# Lol we will have to rewrite this README later anyways for the TA
+
+Useful command to launch a jupyter server that does serverside notebook rendering and hence never loses state even after being closed:
+
+```sh
+uv run jupyverse --set frontend.collaborative=true --set auth.mode=noauth --set kernels.require_yjs=true --set jupyterlab.server_side_execution=true --port 8349
+```
+
 # 50.007 ML Project
 
 - Kaggle link: <https://www.kaggle.com/competitions/50-007-machine-learning-summer-2024>
