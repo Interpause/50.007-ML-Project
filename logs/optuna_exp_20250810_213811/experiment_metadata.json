@@ -1,0 +1,17 @@
+{
+  "experiment_name": "optuna_exp_20250810_213811",
+  "start_time": "2025-08-10T21:38:26.999502",
+  "base_hyperparameters": {
+    "val_split": 0.4,
+    "seed": 42,
+    "num_rounds": 10000,
+    "early_stopping_rounds": 500,
+    "dim_reduction_method": "pca"
+  },
+  "data_files": {
+    "train_csv": "./data/train.csv",
+    "train_tfidf_csv": "./data/train_tfidf_features.csv",
+    "test_csv": "./data/test.csv",
+    "test_tfidf_csv": "./data/test_tfidf_features.csv"
+  }
+}

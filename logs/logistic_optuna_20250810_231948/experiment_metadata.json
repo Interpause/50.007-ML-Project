@@ -1,0 +1,35 @@
+{
+  "experiment_name": "logistic_optuna_20250810_231948",
+  "timestamp": "2025-08-10T23:24:31.094600",
+  "best_cv_f1": 0.7169908224315857,
+  "best_params": {
+    "max_features": 50000,
+    "min_df": 2,
+    "max_df": 0.9749579684620518,
+    "ngram_max": 2,
+    "sublinear_tf": true,
+    "k_features": 8000,
+    "C": 1.111814834854087,
+    "solver": "lbfgs",
+    "penalty": "l2",
+    "max_iter": 2000
+  },
+  "evaluation_results": {
+    "cv_scores": [
+      0.7146640470778549,
+      0.7258117899314591,
+      0.7219208505394306,
+      0.714249302152204,
+      0.7083081224569803
+    ],
+    "mean_cv_f1": 0.7169908224315857,
+    "std_cv_f1": 0.006171446193818221,
+    "cv_range": [
+      0.7083081224569803,
+      0.7258117899314591
+    ]
+  },
+  "total_trials": 200,
+  "n_complete": 200,
+  "n_failed": 0
+}

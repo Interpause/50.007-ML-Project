@@ -1,0 +1,23 @@
+{
+  "experiment_name": "optuna_exp_20250810_213811",
+  "optimization_completed": "2025-08-10T22:16:39.701846",
+  "total_trials": 103,
+  "best_trial_number": 94,
+  "best_val_f1": 0.695097,
+  "best_params": {
+    "dim_n_components": 600,
+    "xgb_max_depth": 5,
+    "xgb_learning_rate": 0.00556178353250608,
+    "xgb_subsample": 0.5635517015265841,
+    "xgb_colsample_bynode": 0.29465651555894085,
+    "xgb_min_child_weight": 15.509993186959967,
+    "xgb_min_split_loss": 1.457161565140586,
+    "xgb_lambda": 8.047558328691794,
+    "xgb_alpha": 6.920562038774711
+  },
+  "study_statistics": {
+    "n_complete": 102,
+    "n_failed": 1,
+    "n_pruned": 0
+  }
+}
