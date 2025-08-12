@@ -1,0 +1,35 @@
+{
+  "hyperparameters": {
+    "val_split": 0.4,
+    "seed": 42,
+    "num_rounds": 100000,
+    "early_stopping_rounds": 500,
+    "dim_reduction_method": "svd",
+    "xgb_max_depth": 5,
+    "xgb_learning_rate": 0.00556178353250608,
+    "xgb_num_parallel_tree": 1,
+    "xgb_colsample_bynode": 0.29465651555894085,
+    "xgb_subsample": 0.5635517015265841,
+    "xgb_min_split_loss": 1.457161565140586,
+    "xgb_min_child_weight": 15.509993186959967
+  },
+  "cv_results": {
+    "cv_scores": [
+      0.696747,
+      0.694761,
+      0.701842,
+      0.680917,
+      0.698922
+    ],
+    "mean_cv_score": 0.6946378,
+    "std_cv_score": 0.007252297881361467,
+    "oof_f1": 0.694645092600999
+  },
+  "experiment_name": "optuna_exp_20250810_213811",
+  "ensemble_filename": "20250810-2236-ensemble-cv.csv",
+  "ensemble_performance": {
+    "mean_cv_f1": 0.6946378,
+    "std_cv_f1": 0.007252297881361467,
+    "oof_f1": 0.694645092600999
+  }
+}
