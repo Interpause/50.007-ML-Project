@@ -14,12 +14,12 @@ macro_f1_scorer = make_scorer(f1_score, average='macro')
 # --- 1. Load Data ---
 print("Loading data...")
 # Load training data
-train_df = pd.read_csv('train_tfidf_features.csv')
+train_df = pd.read_csv('./data/train_tfidf_features.csv')
 X_train_full = train_df.drop(['id', 'label'], axis=1) # Features (columns 0-4999)
 y_train_full = train_df['label']                       # Labels
 
 # Load test data
-test_df = pd.read_csv('test_tfidf_features.csv')
+test_df = pd.read_csv('./data/test_tfidf_features.csv')
 X_test = test_df.drop(['id'], axis=1) # Features (columns 0-4999)
 test_ids = test_df['id']              # Test IDs for submission
 
